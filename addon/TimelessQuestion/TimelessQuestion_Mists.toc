@@ -1,0 +1,17 @@
+## Interface: 50504
+## Title: Timeless Question Autocomplete
+## Title-frFR: Éternelle question - réponse automatique
+## Notes: Answers Senior Historian Evelyna's daily lore question for you, in any game language.
+## Notes-frFR: Répond à votre place à la question d'histoire quotidienne d'Evelyna, quelle que soit la langue du jeu.
+## Author: Mouchoir
+## Version: 1.0.0
+## X-License: GPL-3.0-or-later
+## X-Website: https://github.com/Mouchoir/Timeless-Question-Autocomplete
+## X-Curse-Project-ID: 1645570
+## SavedVariables: TimelessQuestionDB
+## X-Category: Quests & Leveling
+## IconTexture: Interface\Icons\INV_Misc_Book_11
+
+Locale.lua
+Answers.lua
+Core.lua
