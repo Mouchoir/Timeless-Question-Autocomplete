@@ -32,7 +32,9 @@ Timeless Question: quest turned in.
 
 ### Supported
 
-- **Mists of Pandaria Classic** and **retail**.
+- **Mists of Pandaria Classic**, where it was built and tested. A retail `.toc` is
+  included and the quest still exists there, but retail is untested — the option
+  ids were only verified on Classic.
 - **Every game language.** Not just the ones anyone here can read — the answer is
   matched on a server-side identifier, not on words. See below.
 - All 37 questions.

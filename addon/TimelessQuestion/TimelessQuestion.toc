@@ -1,4 +1,4 @@
-## Interface: 110200
+## Interface: 120100
 ## Title: Timeless Question Autocomplete
 ## Title-frFR: Éternelle question - réponse automatique
 ## Notes: Answers Senior Historian Evelyna's daily lore question for you, in any game language.
