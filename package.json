@@ -1,0 +1,10 @@
+{
+  "name": "timeless-question-autocomplete",
+  "private": true,
+  "scripts": {
+    "test": "node tests/run.js && node tests/run.js frFR"
+  },
+  "devDependencies": {
+    "fengari": "^0.1.4"
+  }
+}

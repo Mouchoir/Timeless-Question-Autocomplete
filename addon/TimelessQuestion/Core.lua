@@ -11,6 +11,7 @@ local STATE_VERSION = 3
 
 local db
 local pending -- answer awaiting its verdict: { key, id, name }
+local answeredAt -- when an answer was last sent, to recognise her reply page
 
 local DEFAULTS = {
 	enabled = true,
@@ -50,6 +51,14 @@ local function SelectGossipOptionCompat(option, index)
 		C_GossipInfo.SelectOption(option.gossipOptionID or index)
 	else
 		SelectGossipOption(index)
+	end
+end
+
+local function CloseGossipCompat()
+	if C_GossipInfo and C_GossipInfo.CloseGossip then
+		C_GossipInfo.CloseGossip()
+	elseif CloseGossip then
+		CloseGossip()
 	end
 end
 
@@ -208,8 +217,8 @@ local REASON_LABEL = {
 	guess = L["VIA_GUESS"],
 }
 
-local function AnswerQuestion()
-	local options = GetGossipOptionList()
+local function AnswerQuestion(options)
+	options = options or GetGossipOptionList()
 
 	-- A correct answer is acknowledged with an optionless page ("C'est exact !").
 	-- Bailing out here is what keeps it from being mistaken for a new question,
@@ -238,6 +247,7 @@ local function AnswerQuestion()
 	end
 
 	pending = { key = key, id = option.gossipOptionID, name = option.name }
+	answeredAt = GetTime()
 	local snapshot = pending
 
 	-- Deferred by one frame: selecting from inside the GOSSIP_SHOW handler can
@@ -303,13 +313,6 @@ function handlers.GOSSIP_SHOW()
 				return
 			end
 		end
-		-- She sometimes acknowledges the correct answer with a single-option
-		-- dialogue before offering the turn-in; clear it.
-		local options = GetGossipOptionList()
-		if #options == 1 and #GetAvailableQuestList() == 0 then
-			SelectGossipOptionCompat(options[1], 1)
-			return
-		end
 	end
 
 	if db.autoAccept and not IsOnQuest() and not IsDoneToday() then
@@ -322,8 +325,26 @@ function handlers.GOSSIP_SHOW()
 		end
 	end
 
-	if IsOnQuest() and not IsReadyForTurnIn() then
-		AnswerQuestion()
+	local options = GetGossipOptionList()
+
+	if #options >= 2 and IsOnQuest() and not IsReadyForTurnIn() then
+		AnswerQuestion(options)
+		return
+	end
+
+	-- What is left is her reply to an answer ("That's correct!"): a page with
+	-- nothing worth clicking, which used to sit there until dismissed by hand.
+	-- Close it -- but only just after we answered, so walking up and talking to
+	-- her normally still opens her dialogue, and never while a quest is on offer,
+	-- which would snatch away a turn-in the player meant to click.
+	if answeredAt and (GetTime() - answeredAt) < 15
+		and #GetAvailableQuestList() == 0 and #GetActiveQuestList() == 0 then
+		answeredAt = nil
+		if #options == 1 then
+			SelectGossipOptionCompat(options[1], 1)
+		else
+			CloseGossipCompat()
+		end
 	end
 end
 

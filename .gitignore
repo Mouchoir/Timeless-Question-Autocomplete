@@ -1,3 +1,4 @@
 dist/
 .release/
 scripts/dev.local.ps1
+node_modules/
