@@ -86,6 +86,9 @@ def hourglass(d, layer):
              (cx - .155, bot - .03), (cx - .005, .5)], (30, 52, 90))
     poly(d, [(cx - .155, bot - .03), (cx + .155, bot - .03), (cx, .60)], GOLD)
     poly(d, [(cx - .09, top + .03), (cx + .09, top + .03), (cx + .02, .40), (cx - .02, .40)], (60, 100, 160))
+    d.line([P(cx, .48), P(cx, .595)], fill=GOLD, width=int(W * .010))     # falling stream
+    for gy_, gr in ((.545, .007), (.575, .006)):
+        disc(d, cx, gy_, gr, GOLD_L)
     cap(top)
     cap(bot)
     bx, by, r = 0.70, 0.70, 0.135
@@ -123,9 +126,17 @@ def roles(d, layer):
     ImageDraw.Draw(m).ellipse(box, fill=255)
     layer.paste(base, (0, 0), m)
     L = (236, 238, 242)
-    sx, sy = cx - .115, cy - .09                       # sword
-    d.line([P(sx - .05, sy + .05), P(sx + .05, sy - .05)], fill=L, width=int(W * .022))
-    d.line([P(sx - .045, sy - .005), P(sx - .005, sy + .035)], fill=L, width=int(W * .018))
+    sx, sy = cx - .115, cy - .09                       # sword, pointing up-right
+    ux, uy = .7071, -.7071
+    qx, qy = -uy, ux
+
+    def sp(a_, b_):
+        return (sx + ux * a_ + qx * b_, sy + uy * a_ + qy * b_)
+
+    poly(d, [sp(-.012, .017), sp(.050, .017), sp(.100, 0), sp(.050, -.017), sp(-.012, -.017)], L)      # blade
+    poly(d, [sp(-.016, .045), sp(-.004, .045), sp(-.004, -.045), sp(-.016, -.045)], L)                 # guard
+    poly(d, [sp(-.016, .009), sp(-.068, .009), sp(-.068, -.009), sp(-.016, -.009)], L)                 # grip
+    disc(d, *sp(-.077, 0), .014, L)                                                                     # pommel
     hx, hy = cx + .115, cy - .09                       # shield
     poly(d, [(hx - .05, hy - .055), (hx + .05, hy - .055), (hx + .05, hy + .01), (hx, hy + .065),
              (hx - .05, hy + .01)], L)
@@ -184,12 +195,16 @@ def heart(d, layer):
     d.line([P(ex0, ey0), P(.5, .22), P(ex1, ey0)], fill=DK, width=int(W * .008), joint="curve")
     d.line([P(ex0, ey0), P(ex1, ey0)], fill=DK, width=int(W * .008))
     # heart rising out of the envelope
-    cx, cy, r = .5, .42, .105
+    cx, cy, k = .5, .47, .0115
     col, hi = (214, 52, 62), (250, 130, 130)
-    disc(d, cx - r * .85, cy - .01, r, col)
-    disc(d, cx + r * .85, cy - .01, r, col)
-    poly(d, [(cx - r * 1.78, cy + .03), (cx + r * 1.78, cy + .03), (cx, cy + .25)], col)
-    disc(d, cx - r * 1.15, cy - .045, .026, hi)
+    pts = []
+    for i in range(240):
+        t = 2 * math.pi * i / 240
+        hx = 16 * math.sin(t) ** 3
+        hy = 13 * math.cos(t) - 5 * math.cos(2 * t) - 2 * math.cos(3 * t) - math.cos(4 * t)
+        pts.append((cx + hx * k, cy - hy * k))
+    poly(d, pts, col)
+    disc(d, cx - .085, cy - .075, .024, hi)
     # front pocket in front of the heart: two side folds and a bottom fold
     poly(d, [(ex0, ey0 + .05), (.5, .60), (ex0, ey1)], LT)
     poly(d, [(ex1, ey0 + .05), (.5, .60), (ex1, ey1)], LT)
