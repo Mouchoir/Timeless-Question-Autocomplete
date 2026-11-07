@@ -5,6 +5,7 @@
 ## Notes-frFR: Répond à votre place à la question d'histoire quotidienne d'Evelyna, quelle que soit la langue du jeu.
 ## Author: Mouchoir
 ## Version: 1.0.1
+## X-Wago-ID: x61x5pN1
 ## X-License: GPL-3.0-or-later
 ## X-Website: https://github.com/Mouchoir/Timeless-Question-Autocomplete
 ## X-Curse-Project-ID: 1645570
